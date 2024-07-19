@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 export default function AppFunctional(props) {
   const [currentIndex, setCurrentIndex] = useState(4);
@@ -25,34 +26,49 @@ export default function AppFunctional(props) {
   };
 
   const getNextIndex = (direction) => {
+    if (typeof direction !== 'string') {
+      throw new Error('getNextIndex: direction must be a string');
+    }
+
     const { x, y } = getXY();
     let newIndex = currentIndex;
     switch (direction) {
       case 'left':
-        if (x > 1) {
-          newIndex -= 1;
+        newIndex = newIndex - 1;
+        if (newIndex < 0) {
+          setMessage("You can't go left");
+          return currentIndex;
         }
+        if (newIndex % 3 === 2) newIndex++;
         break;
       case 'up':
-        if (y > 1) {
-          newIndex -= 3;
+        newIndex = newIndex - 3;
+        if (newIndex < 0) {
+          setMessage("You can't go up");
+          return currentIndex;
         }
         break;
       case 'right':
-        if (x < 3) {
-          newIndex += 1;
+        newIndex = newIndex + 1;
+        if (newIndex > 8) {
+          setMessage("You can't go right");
+          return currentIndex;
         }
+        if (newIndex % 3 === 0) newIndex--;
         break;
       case 'down':
-        if (y < 3) {
-          newIndex += 3;
+        newIndex = newIndex + 3;
+        if (newIndex > 8) {
+          setMessage("You can't go down");
+          return currentIndex;
         }
         break;
       default:
-        break;
+        throw new Error(`getNextIndex: unknown direction '${direction}'`);
     }
     return newIndex;
   };
+
 
   const move = (direction) => {
     const newIndex = getNextIndex(direction);
@@ -67,24 +83,24 @@ export default function AppFunctional(props) {
     }
   };
 
-  const onSubmit = (evt) => {
+  const onSubmit = async (evt) => {
     evt.preventDefault();
-    const formData = new FormData(evt.target);
-    fetch('/api/submit', {
-      method: 'POST',
-      body: formData,
-    })
-      .then((response) => {
-        if (response.ok) {
-          setMessage('Submission successful!');
-        } else {
-          setMessage('Submission failed. Please try again.');
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        setMessage('Submission failed. Please try again.');
+    try {
+      const formData = new FormData(evt.target);
+      const response = await fetch('http://localhost:9000/api/result',
+{
+        method: 'POST',
+        body: formData,
       });
+      if (response.ok) {
+        setMessage('Submission successful!');
+      } else {
+        throw new Error('Submission failed. Please try again.');
+      }
+    } catch (error) {
+      console.error(error);
+      setMessage('Submission failed. Please try again.');
+    }
   };
 
   return (
@@ -119,7 +135,7 @@ export default function AppFunctional(props) {
         <button id="down" onClick={() => move('down')}>
           DOWN
         </button>
-        <button id="reset"></button>
+        <button id="reset" onClick={reset}> reset</button>
       </div>
       <form onSubmit={onSubmit}>
         <input
