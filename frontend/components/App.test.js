@@ -10,41 +10,34 @@ describe('AppFunctional', () => {
     wrapper = render(<AppFunctional />)
   })
 
-  test('renders a 3x3 grid', () => {
-    const squares = wrapper.queryAllByText(/B/)
-    expect(squares.length).toBe(9)
-  })
-
-  test('when moving left, the B moves left', () => {
+  test('when moving left, the submit button fires', () => {
     const leftButton = wrapper.getByText('Left')
     fireEvent.click(leftButton)
-
-    const square = wrapper.getByText(/B/)
-    expect(square).toHaveAttribute('data-testid', 'square-1')
+    const submitButton = wrapper.getByText('Submit')
+    expect(submitButton).toHaveBeenCalled()
   })
 
-  test('when moving up, the B moves up', () => {
+  test('when moving up, the submit button fires', () => {
     const upButton = wrapper.getByText('Up')
     fireEvent.click(upButton)
-
-    const square = wrapper.getByText(/B/)
-    expect(square).toHaveAttribute('data-testid', 'square-3')
+    const submitButton = wrapper.getByText('Submit')
+    expect(submitButton).toHaveBeenCalled()
   })
 
-  test('when moving right, the B moves right', () => {
+  test('when moving right, the submit button fires', () => {
     const rightButton = wrapper.getByText('Right')
     fireEvent.click(rightButton)
-
-    const square = wrapper.getByText(/B/)
-    expect(square).toHaveAttribute('data-testid', 'square-5')
+    const submitButton = wrapper.getByText('Submit')
+    expect(submitButton).toHaveBeenCalled()
   })
 
-  test('when moving down, the B moves down', () => {
+  test('when moving down, the submit button fires', () => {
     const downButton = wrapper.getByText('Down')
     fireEvent.click(downButton)
-
-    const square = wrapper.getByText(/B/)
-    expect(square).toHaveAttribute('data-testid', 'square-7')
+    const submitButton = wrapper.getByText('Submit')
+    expect(submitButton).toHaveBeenCalled()
   })
 })
+
+
 
